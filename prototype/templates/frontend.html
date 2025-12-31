@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeriCourt – Evidence Integrity Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 1; }
+            50% { transform: scale(1); opacity: 0.7; }
+            100% { transform: scale(0.95); opacity: 1; }
+        }
+        
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-in { animation: slideIn 0.5s ease-out; }
+        .scale-in { animation: scaleIn 0.4s ease-out; }
+        .float { animation: float 3s ease-in-out infinite; }
+        .pulse-ring { animation: pulse-ring 2s ease-in-out infinite; }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        input:focus, select:focus {
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .drag-over {
+            border-color: #667eea !important;
+            background-color: #f0f4ff !important;
+            transform: scale(1.02);
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .custom-file-input {
+            position: relative;
+            z-index: 10;
+            cursor: pointer;
+        }
+        
+        .shimmer-bg {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
+        
+        .section-card {
+            transition: all 0.3s ease;
+        }
+        
+        .section-card:hover {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 min-h-screen p-4 md:p-8">
+
+<!-- Floating Background Shapes -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+    <div class="absolute top-40 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style="animation-delay: 2s;"></div>
+    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style="animation-delay: 4s;"></div>
+</div>
+
+<div class="max-w-5xl mx-auto relative z-10">
+    
+    <!-- Header Section -->
+    <div class="text-center mb-12 fade-in">
+        <div class="inline-flex items-center justify-center mb-6">
+            <div class="relative">
+                <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-lg opacity-50 pulse-ring"></div>
+                <div class="relative gradient-bg p-4 rounded-2xl shadow-2xl float">
+                    <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <h1 class="text-5xl md:text-6xl font-black mb-4">
+            <span class="gradient-text">⚖️ VeriCourt</span>
+        </h1>
+        <p class="text-xl text-gray-700 font-medium mb-3">
+            Court-Ready Digital Evidence Integrity System
+        </p>
+        <p class="text-sm text-gray-500 max-w-2xl mx-auto">
+            Secure your evidence with cryptographic hashing • Detect tampering instantly • Maintain chain of custody
+        </p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="glass-effect shadow-2xl rounded-3xl p-8 mb-8 slide-in">
+
+        <!-- ================= REGISTER SECTION ================= -->
+        <div class="section-card border-2 border-blue-100 bg-gradient-to-br from-blue-50/50 to-white rounded-2xl p-6 mb-8 hover-lift">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-xl shadow-lg">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">📥 Step 1: Register Evidence</h2>
+                    <p class="text-sm text-gray-500">Create cryptographic fingerprint of your evidence</p>
+                </div>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="block mb-2 text-sm font-bold text-gray-700 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                        </svg>
+                        Evidence ID / Title
+                    </label>
+                    <input id="title" 
+                           class="w-full border-2 border-gray-300 p-3.5 rounded-xl focus:border-blue-500 focus:outline-none transition-all text-gray-900 font-medium"
+                           placeholder="Accident_Video_01">
+                </div>
+
+                <div>
+                    <label class="block mb-2 text-sm font-bold text-gray-700 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                        </svg>
+                        Source Type
+                    </label>
+                    <select id="source" 
+                            class="w-full border-2 border-gray-300 p-3.5 rounded-xl focus:border-blue-500 focus:outline-none transition-all text-gray-900 font-medium">
+                        <option value="CCTV">🎥 Official CCTV</option>
+                        <option value="DASHCAM">🚗 Dashcam</option>
+                        <option value="MOBILE">📱 Mobile Phone</option>
+                        <option value="FORWARDED">📤 Forwarded / Unknown</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block mb-2 text-sm font-bold text-gray-700 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                        Upload Evidence File
+                    </label>
+                    <div class="relative">
+                        <input type="file" id="registerFile" class="hidden" onchange="handleFileSelect(this, 'registerFileName')">
+                        <div id="registerDropZone" 
+                             class="border-3 border-dashed border-gray-300 bg-white rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 hover:border-blue-400 hover:bg-blue-50/50 hover:scale-[1.01]"
+                             onclick="document.getElementById('registerFile').click()">
+                            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="text-gray-700 font-semibold mb-2 text-lg">Drop your file here or click to browse</p>
+                            <p class="text-sm text-gray-500 mb-1" id="registerFileName">No file selected</p>
+                            <p class="text-xs text-gray-400">Supports: Video, Images, Documents (Max 100MB)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="registerEvidence()"
+                        class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold px-6 py-4 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center gap-3 group">
+                    <svg class="w-6 h-6 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    <span class="text-lg">Register Evidence</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= REGISTRATION RESULT ================= -->
+        <div id="registerResult" class="hidden section-card border-2 border-green-400 bg-gradient-to-br from-green-50 to-white rounded-2xl p-6 mb-8 scale-in">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-2xl shadow-xl">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-800">✅ Registration Successful</h3>
+                    <p class="text-sm text-gray-600">Evidence secured with cryptographic hash</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-white border-l-4 border-green-500 rounded-xl p-4 shadow-sm hover-lift">
+                    <p class="text-sm font-semibold text-gray-500 mb-1">Evidence ID:</p>
+                    <p class="text-lg font-bold text-gray-900" id="resEvidenceId"></p>
+                </div>
+
+                <div class="bg-white border-l-4 border-blue-500 rounded-xl p-4 shadow-sm hover-lift">
+                    <p class="text-sm font-semibold text-gray-500 mb-1">Hash:</p>
+                    <p class="text-sm font-mono text-blue-700 break-all leading-relaxed" id="resHash"></p>
+                </div>
+
+                <div class="bg-white border-l-4 border-amber-500 rounded-xl p-4 shadow-sm hover-lift">
+                    <p class="text-sm font-semibold text-gray-500 mb-1">Pre-Entry Risk:</p>
+                    <p class="text-lg font-bold text-amber-700" id="resRisk"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VERIFY SECTION ================= -->
+        <div class="section-card border-2 border-purple-100 bg-gradient-to-br from-purple-50/50 to-white rounded-2xl p-6 mb-8 hover-lift">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-3 rounded-xl shadow-lg">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">🔍 Step 2: Verify Evidence Integrity</h2>
+                    <p class="text-sm text-gray-500">Check if evidence has been tampered with</p>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-amber-400 rounded-xl p-4 mb-6">
+                <div class="flex items-start gap-3">
+                    <svg class="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                    </svg>
+                    <div>
+                        <p class="text-sm text-amber-900 font-medium">
+                            Upload the <b>same file again</b>. Any modification will be detected.
+                        </p>
+                        <p class="text-xs text-amber-700 mt-1">
+                            Our SHA-256 algorithm detects even single-byte changes
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-5">
+                <div>
+                    <label class="block mb-2 text-sm font-bold text-gray-700 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Upload File for Verification
+                    </label>
+                    <div class="relative">
+                        <input type="file" id="verifyFile" class="hidden" onchange="handleFileSelect(this, 'verifyFileName')">
+                        <div id="verifyDropZone"
+                             class="border-3 border-dashed border-gray-300 bg-white rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 hover:border-purple-400 hover:bg-purple-50/50 hover:scale-[1.01]"
+                             onclick="document.getElementById('verifyFile').click()">
+                            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p class="text-gray-700 font-semibold mb-2 text-lg">Drop your file here to verify</p>
+                            <p class="text-sm text-gray-500 mb-1" id="verifyFileName">No file selected</p>
+                            <p class="text-xs text-gray-400">Must match the registered file exactly</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="verifyEvidence()"
+                        class="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold px-6 py-4 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center gap-3 group">
+                    <svg class="w-6 h-6 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <span class="text-lg">Verify Evidence</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= VERIFICATION RESULT ================= -->
+        <div id="verifyResult" class="hidden section-card rounded-2xl p-6 mb-8 scale-in">
+            <div class="flex items-center gap-4 mb-4">
+                <div id="verifyIcon" class="p-4 rounded-2xl shadow-xl">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-800">🧪 Verification Result</h3>
+                    <p class="text-sm text-gray-600">Analysis complete</p>
+                </div>
+            </div>
+            <div class="bg-white border-l-4 rounded-xl p-5 shadow-sm" id="verifyMessageBox">
+                <p id="verifyMessage" class="text-lg font-semibold"></p>
+            </div>
+        </div>
+
+        <!-- ================= COMING SOON ================= -->
+       <!-- ================= COMING SOON ================= -->
+<div class="section-card border-2 border-amber-100 bg-gradient-to-br from-amber-50/50 to-white rounded-2xl p-6 hover-lift">
+    <div class="flex items-center gap-3 mb-6">
+        <div class="bg-gradient-to-br from-amber-500 to-amber-600 p-3 rounded-xl shadow-lg">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+        </div>
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800">🚧 Coming Soon</h2>
+            <p class="text-sm text-gray-500">Advanced features in development</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Multi-Evidence Corroboration -->
+        <div class="bg-white border-l-4 border-purple-400 rounded-xl p-4 shadow-sm hover-lift">
+            <div class="flex items-start gap-3">
+                <div class="bg-purple-100 p-2 rounded-lg">
+                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 mb-1">Multi-Evidence Corroboration</h3>
+                    <p class="text-xs text-gray-600">Cross-verify multiple evidence sources</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Manipulation Detection -->
+        <div class="bg-white border-l-4 border-purple-400 rounded-xl p-4 shadow-sm hover-lift">
+            <div class="flex items-start gap-3">
+                <div class="bg-purple-100 p-2 rounded-lg">
+                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-3.314 0-6 3-6 6s2.686 6 6 6 6-3 6-6-2.686-6-6-6zM12 14a2 2 0 100-4 2 2 0 000 4z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 mb-1">AI Manipulation Detection</h3>
+                    <p class="text-xs text-gray-600">Detect deepfakes and alterations</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chain-of-Custody Timeline -->
+        <div class="bg-white border-l-4 border-green-400 rounded-xl p-4 shadow-sm hover-lift">
+            <div class="flex items-start gap-3">
+                <div class="bg-green-100 p-2 rounded-lg">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 mb-1">Chain-of-Custody Timeline</h3>
+                    <p class="text-xs text-gray-600">Complete audit trail with timestamps</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Judge & Police Dashboards -->
+        <div class="bg-white border-l-4 border-red-400 rounded-xl p-4 shadow-sm hover-lift">
+            <div class="flex items-start gap-3">
+                <div class="bg-red-100 p-2 rounded-lg">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-bold text-gray-800 mb-1">Judge & Police Dashboards</h3>
+                    <p class="text-xs text-gray-600">Real-time case management portals</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+<script>
+    let savedEvidenceId = null;
+
+    // Drag and drop handlers
+    function setupDragAndDrop(dropZoneId, fileInputId) {
+        const dropZone = document.getElementById(dropZoneId);
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.add('drag-over');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => {
+                dropZone.classList.remove('drag-over');
+            }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            document.getElementById(fileInputId).files = files;
+            handleFileSelect(document.getElementById(fileInputId), dropZoneId.replace('DropZone', 'FileName'));
+        }, false);
+    }
+
+    setupDragAndDrop('registerDropZone', 'registerFile');
+    setupDragAndDrop('verifyDropZone', 'verifyFile');
+
+    function handleFileSelect(input, displayId) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const fileName = file.name;
+            const fileSize = (file.size / 1024 / 1024).toFixed(2);
+            document.getElementById(displayId).textContent = `${fileName} (${fileSize} MB)`;
+        }
+    }
+
+    async function registerEvidence() {
+        const file = document.getElementById("registerFile").files[0];
+        const title = document.getElementById("title").value;
+        const source = document.getElementById("source").value;
+
+        if (!file || !title) {
+            showNotification("Evidence ID and file are required", "error");
+            return;
+        }
+
+        // Show loading state
+        const btn = event.target;
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<svg class="animate-spin h-6 w-6 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+        btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("evidence_id", title);
+        formData.append("source_type", source);
+        formData.append("uploader_claim", "Declared by uploader");
+
+        try {
+            const response = await fetch("/register", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            savedEvidenceId = data.evidence_id;
+
+            document.getElementById("resEvidenceId").innerText = data.evidence_id;
+            document.getElementById("resHash").innerText = data.hash;
+            document.getElementById("resRisk").innerText = data.pre_entry_risk;
+
+            const resultDiv = document.getElementById("registerResult");
+            resultDiv.classList.remove("hidden");
+            
+            // Smooth scroll to result
+            setTimeout(() => {
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+
+            showNotification("Evidence registered successfully!", "success");
+
+        } catch (error) {
+            showNotification("Registration failed. Please try again.", "error");
+            console.error("Error:", error);
+        } finally {
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+        }
+    }
+
+    async function verifyEvidence() {
+        const file = document.getElementById("verifyFile").files[0];
+
+        if (!file || !savedEvidenceId) {
+            showNotification("Register evidence first, then verify", "error");
+            return;
+        }
+
+        // Show loading state
+        const btn = event.target;
+        const originalContent = btn.innerHTML;
+        btn.innerHTML = '<svg class="animate-spin h-6 w-6 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
+        btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("evidence_id", savedEvidenceId);
+
+        try {
+            const response = await fetch("/verify", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            const box = document.getElementById("verifyResult");
+            const msg = document.getElementById("verifyMessage");
+            const msgBox = document.getElementById("verifyMessageBox");
+            const icon = document.getElementById("verifyIcon");
+
+            if (data.integrity_status === "INTACT") {
+                msg.innerHTML = "✅ <b>Integrity Intact:</b> No tampering detected.";
+                box.className = "section-card border-2 border-green-400 bg-gradient-to-br from-green-50 to-white rounded-2xl p-6 mb-8 scale-in";
+                msgBox.className = "bg-white border-l-4 border-green-500 rounded-xl p-5 shadow-sm";
+                icon.className = "bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-2xl shadow-xl";
+                icon.innerHTML = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                showNotification("Verification successful: Evidence is intact!", "success");
+            } else {
+                msg.innerHTML = "🚨 <b>Integrity Broken:</b> Evidence has been modified.";
+                box.className = "section-card border-2 border-red-400 bg-gradient-to-br from-red-50 to-white rounded-2xl p-6 mb-8 scale-in";
+                msgBox.className = "bg-white border-l-4 border-red-500 rounded-xl p-5 shadow-sm";
+                icon.className = "bg-gradient-to-br from-red-500 to-red-600 p-4 rounded-2xl shadow-xl";
+                icon.innerHTML = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+                showNotification("Warning: Evidence tampering detected!", "error");
+            }
+
+            box.classList.remove("hidden");
+            
+            // Smooth scroll to result
+            setTimeout(() => {
+                box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+
+        } catch (error) {
+            showNotification("Verification failed. Please try again.", "error");
+            console.error("Error:", error);
+        } finally {
+            btn.innerHTML = originalContent;
+            btn.disabled = false;
+        }
+    }
+
+    // Notification system
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+        
+        notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3 fade-in`;
+        notification.innerHTML = `
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' : 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'}"></path>
+            </svg>
+            <span class="font-semibold">${message}</span>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            notification.style.transition = 'all 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+</script>
+
+
+ <!-- Footer -->
+    <div class="text-center mt-8 fade-in">
+        <p class="text-sm text-gray-500">
+            🔒 Powered by SHA-256 Cryptographic Hashing • Built for Legal Compliance
+        </p>
+        <p class="text-xs text-gray-400 mt-2">
+            VeriCourt © 2025 • Ensuring Evidence Integrity for Justice
+        </p>
+    </div>
+</body>
+</html>
