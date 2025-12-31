@@ -1,24 +1,24 @@
-1.ER DIAGRAM:-
+## **1.ER DIAGRAM:-**
 ![1. ER DIAGRAM](images/er_diagram.png)
 
-2.FLOWCHART:-
+## **2.FLOWCHART:-**
 ![2. FLOWCHART](images/flowchart.png)
 
-3.DATA FLOW DIAGRAM(DFD):-
+## **3.DATA FLOW DIAGRAM(DFD):-**
 ![3. DFD](images/dfd.png) 
 
-4.EVIDENCE CAPTURE AND VERIFICATION FLOW
+## **4.EVIDENCE CAPTURE AND VERIFICATION FLOW**
 ![4. EVIDENCE CAPTURE AND VERIFICATION FLOW](images/evidence_capture_and_verification_flow.png)
 
- #**VeriCourt:-A Court-Aware Digital Evidence Integrity & Trust Assessment Framework**#
+ # **VeriCourt:-A Court-Aware Digital Evidence Integrity & Trust Assessment Framework**
 
-##**1. Overview**## 
+### **1. Overview**
 
 Digital media has become a critical form of legal evidence, yet most systems focus only on preserving files after submission. They fail to assess how much an evidence item should be trusted, especially when manipulation, delay, or loss of context may occur before it enters an official system. 
 
 VeriCourt shifts the focus from claiming authenticity to structured, transparent credibility assessment, aligned with judicial reasoning rather than technological absolutism. 
 
-##**2. Problem Statement**## 
+### **2. Problem Statement**
 
 Modern courts increasingly rely on videos, images, and audio recordings, but existing evidence systems suffer from three systemic failures: 
 
@@ -30,11 +30,11 @@ Modern courts increasingly rely on videos, images, and audio recordings, but exi
 
 Courts do not require technological truth; they require explainability, transparency, and clearly stated uncertainty. 
 
-3. Key Insight 
+### **3. Key Insight**
 
 Evidence preservation is not the same as evidence trust evaluation. 
 
-4. VeriCourt Philosophy 
+### **4. VeriCourt Philosophy** 
 
 VeriCourt does not determine what is true. 
 
@@ -48,7 +48,7 @@ It structures:
 
 (d)The framework supports judicial judgment rather than replacing it. 
 
-5. Trust Boundary Shift 
+### **5. Trust Boundary Shift** 
 
 Evidence is assigned legal weight based on its source: 
 
@@ -62,7 +62,7 @@ Evidence is assigned legal weight based on its source:
 
 This prevents over-reliance on edited or viral content and mirrors real-world judicial intuition. 
 
-6. Pre-Entry Risk Scoring 
+### **6. Pre-Entry Risk Scoring** 
 
 Instead of claiming authenticity, VeriCourt evaluates pre-entry risk using factors such as: 
 
@@ -80,7 +80,7 @@ Output: Low / Medium / High Pre-Entry Risk
 
 Uncertainty is disclosed rather than concealed. 
 
-7. Mandatory Disclosure Protocol 
+### **7. Mandatory Disclosure Protocol** 
 
 Each uploader must formally declare: 
 
@@ -92,7 +92,7 @@ Each uploader must formally declare:
 
 These declarations are immutably recorded. If later contradicted, the credibility of the evidence collapses, similar to a false affidavit. 
 
-8. Post-Registration Integrity Protection 
+### **8. Post-Registration Integrity Protection** 
 
 Once registered: 
 
@@ -104,7 +104,7 @@ A unique Evidence ID is assigned
          ↓
 This ensures post-entry integrity without making retroactive authenticity claims. 
          
-9. Multi-Source Corroboration Logic 
+### **9. Multi-Source Corroboration Logic** 
 
 When multiple evidences exist, VeriCourt evaluates: 
 
@@ -118,7 +118,7 @@ When multiple evidences exist, VeriCourt evaluates:
 
 The system flags agreement, conflict, or dependency but issues no probabilistic verdicts. 
 
-10. Expectation-Based Evidence Coverage 
+### **10. Expectation-Based Evidence Coverage** 
 
 The system assesses whether additional evidence should reasonably exist given the context. 
 
@@ -130,7 +130,7 @@ Examples:
 
 (iii)Missing expected evidence results in a coverage warning, not an accusation. 
 
-11. Judicial Output & Scope 
+### **11. Judicial Output & Scope** 
 
 VeriCourt generates a neutral analytical report including: 
 
@@ -148,13 +148,13 @@ All final determinations remain entirely human. VeriCourt does not reconstruct e
 
 ## **Improvements in Round 2:-**
 
-1. Multi-Evidence Corroboration:
+### **1. Multi-Evidence Corroboration:**
 
 -> Cross-verify multiple related evidence files (e.g., CCTV + dashcam + mobile video of the same event).
 
 -> Show a consistency report highlighting mismatches or confirmed matches.
 
-2. Chain-of-Custody Tracking
+### **2. Chain-of-Custody Tracking**
 
 -> Maintain a timeline of every action on each evidence (uploaded, verified, accessed, shared).
 
@@ -162,7 +162,7 @@ All final determinations remain entirely human. VeriCourt does not reconstruct e
 
 -> Can be stored in a small database like SQLite.
 
-3. Secure User Authentication
+### **3. Secure User Authentication**
 
 -> Allow judges, police, or admin roles to log in.
 
@@ -170,7 +170,7 @@ All final determinations remain entirely human. VeriCourt does not reconstruct e
 
 -> Can integrate JWT or session-based authentication.
 
-4. Enhanced Pre-Entry Risk Assessment
+### **4. Enhanced Pre-Entry Risk Assessment**
 
 -> Include more factors for risk:
 
@@ -182,10 +182,10 @@ All final determinations remain entirely human. VeriCourt does not reconstruct e
 
 -> Assign dynamic risk score (Low / Medium / High / Critical).
 
-5. File Metadata Extraction
+### **5. File Metadata Extraction**
 
 -> Extract metadata like: Camera type, timestamp, GPS coordinates (if available)
 
-6. Download / Print Evidence Report
+### **6. Download / Print Evidence Report**
 
 -> Allow users to download a PDF certificate of evidence integrity, including hash, risk, source, and timestamp.
