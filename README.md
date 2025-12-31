@@ -1,12 +1,16 @@
+1.ER DIAGRAM:-
 ![1. ER DIAGRAM](images/er_diagram.png)
 
+2.FLOWCHART:-
 ![2. FLOWCHART](images/flowchart.png)
 
+3.DATA FLOW DIAGRAM(DFD):-
 ![3. DFD](images/dfd.png) 
 
+4.EVIDENCE CAPTURE AND VERIFICATION FLOW
 ![4. EVIDENCE CAPTURE AND VERIFICATION FLOW](images/evidence_capture_and_verification_flow.png)
 
-VeriCourt:-A Court-Aware Digital Evidence Integrity & Trust Assessment Framework 
+ VeriCourt:-A Court-Aware Digital Evidence Integrity & Trust Assessment Framework
 
 1. Overview 
 
@@ -141,3 +145,47 @@ VeriCourt generates a neutral analytical report including:
 4. Evidence coverage adequacy 
 
 All final determinations remain entirely human. VeriCourt does not reconstruct events, claim certainty, or replace judicial reasoning. 
+
+## **Improvements in Round 2:-**
+
+1. Multi-Evidence Corroboration:
+
+-> Cross-verify multiple related evidence files (e.g., CCTV + dashcam + mobile video of the same event).
+
+-> Show a consistency report highlighting mismatches or confirmed matches.
+
+2. Chain-of-Custody Tracking
+
+-> Maintain a timeline of every action on each evidence (uploaded, verified, accessed, shared).
+
+-> Use timestamps + user IDs to show audit trail.
+
+-> Can be stored in a small database like SQLite.
+
+3. Secure User Authentication
+
+-> Allow judges, police, or admin roles to log in.
+
+-> Only registered users can upload/verify.
+
+-> Can integrate JWT or session-based authentication.
+
+4. Enhanced Pre-Entry Risk Assessment
+
+-> Include more factors for risk:
+
+->  File source reliability
+
+-> Upload time (recent or delayed)
+
+-> File format and metadata
+
+-> Assign dynamic risk score (Low / Medium / High / Critical).
+
+5. File Metadata Extraction
+
+-> Extract metadata like: Camera type, timestamp, GPS coordinates (if available)
+
+6. Download / Print Evidence Report
+
+-> Allow users to download a PDF certificate of evidence integrity, including hash, risk, source, and timestamp.
