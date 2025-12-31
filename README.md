@@ -10,15 +10,15 @@
 4.EVIDENCE CAPTURE AND VERIFICATION FLOW
 ![4. EVIDENCE CAPTURE AND VERIFICATION FLOW](images/evidence_capture_and_verification_flow.png)
 
- VeriCourt:-A Court-Aware Digital Evidence Integrity & Trust Assessment Framework
+ #**VeriCourt:-A Court-Aware Digital Evidence Integrity & Trust Assessment Framework**#
 
-1. Overview 
+##**1. Overview**## 
 
 Digital media has become a critical form of legal evidence, yet most systems focus only on preserving files after submission. They fail to assess how much an evidence item should be trusted, especially when manipulation, delay, or loss of context may occur before it enters an official system. 
 
 VeriCourt shifts the focus from claiming authenticity to structured, transparent credibility assessment, aligned with judicial reasoning rather than technological absolutism. 
 
-2. Problem Statement 
+##**2. Problem Statement**## 
 
 Modern courts increasingly rely on videos, images, and audio recordings, but existing evidence systems suffer from three systemic failures: 
 
