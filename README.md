@@ -1,14 +1,18 @@
 ## **1.ER DIAGRAM:-**
 ![1. ER DIAGRAM](images/er_diagram.png)
 
+
 ## **2.FLOWCHART:-**
 ![2. FLOWCHART](images/flowchart.png)
+
 
 ## **3.DATA FLOW DIAGRAM(DFD):-**
 ![3. DFD](images/dfd.png) 
 
-## **4.EVIDENCE CAPTURE AND VERIFICATION FLOW**
+
+## **4.EVIDENCE CAPTURE AND VERIFICATION FLOW:-**
 ![4. EVIDENCE CAPTURE AND VERIFICATION FLOW](images/evidence_capture_and_verification_flow.png)
+
 
  # **VeriCourt:-A Court-Aware Digital Evidence Integrity & Trust Assessment Framework**
 
