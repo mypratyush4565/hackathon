@@ -193,3 +193,8 @@ All final determinations remain entirely human. VeriCourt does not reconstruct e
 ### **6. Download / Print Evidence Report**
 
 -> Allow users to download a PDF certificate of evidence integrity, including hash, risk, source, and timestamp.
+
+## System Design – Round 2
+
+This section describes the high-level system architecture,
+data flow, and component interactions for the hackathon solution.
