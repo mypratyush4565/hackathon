@@ -10,15 +10,21 @@ def create_tables():
     cursor = conn.cursor()
 
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS audit_log (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        evidence_id INTEGER,
-        action TEXT,
-        performed_by TEXT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
+        CREATE TABLE IF NOT EXISTS audit_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            evidence_id INTEGER NOT NULL,
+            action TEXT NOT NULL,
+            performed_by TEXT NOT NULL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
     """)
 
     conn.commit()
     conn.close()
+
+# Run this file once to create database & table
+if __name__ == "__main__":
+    create_tables()
+    print("Database & audit_log table created successfully.")
+
 
