@@ -3,610 +3,856 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VeriCourt – Evidence Integrity Prototype</title>
+    <title>VeriCourt – Digital Evidence Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes scaleIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        @keyframes pulse-ring {
-            0% { transform: scale(0.95); opacity: 1; }
-            50% { transform: scale(1); opacity: 0.7; }
-            100% { transform: scale(0.95); opacity: 1; }
+        * { scroll-behavior: smooth; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        .fade-in { animation: fadeIn 0.7s ease-out; }
+        .slide-right { animation: slideRight 0.6s ease-out; }
+        
+        /* Dark Theme (Default) */
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e7ff;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            transition: background 0.3s ease, color 0.3s ease;
         }
         
-        .fade-in { animation: fadeIn 0.6s ease-out; }
-        .slide-in { animation: slideIn 0.5s ease-out; }
-        .scale-in { animation: scaleIn 0.4s ease-out; }
-        .float { animation: float 3s ease-in-out infinite; }
-        .pulse-ring { animation: pulse-ring 2s ease-in-out infinite; }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* Light Theme */
+        body.light-mode {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+            color: #1e293b;
         }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .hover-lift {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .hover-lift:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        
-        input:focus, select:focus {
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        .drag-over {
-            border-color: #667eea !important;
-            background-color: #f0f4ff !important;
-            transform: scale(1.02);
-        }
-        
-        .file-input-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            width: 100%;
-        }
-        
-        .custom-file-input {
-            position: relative;
-            z-index: 10;
-            cursor: pointer;
-        }
-        
-        .shimmer-bg {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 1000px 100%;
-            animation: shimmer 2s infinite;
-        }
-        
-        .section-card {
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
             transition: all 0.3s ease;
         }
         
-        .section-card:hover {
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        body.light-mode .glass-dark {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4);
+        }
+        .input-field {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #e0e7ff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        body.light-mode .input-field {
+            background: rgba(248, 250, 252, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            color: #1e293b;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        body.light-mode .input-field:focus {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .input-field::placeholder { color: #64748b; }
+        
+        body.light-mode .input-field::placeholder { color: #94a3b8; }
+        .drop-zone {
+            border: 2px dashed rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.3);
+        }
+        
+        body.light-mode .drop-zone {
+            background: rgba(248, 250, 252, 0.5);
+            border: 2px dashed rgba(59, 130, 246, 0.4);
+        }
+        
+        .drop-zone:hover { border-color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+        .drop-zone.drag-over { border-color: #3b82f6; background: rgba(59, 130, 246, 0.15); transform: scale(1.02); }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+        
+        body.light-mode .theme-toggle {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+        }
+        
+        body.light-mode .theme-toggle:hover {
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.6);
+        }
+        .badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-warning { background: rgba(251, 146, 60, 0.2); color: #fed7aa; border: 1px solid rgba(251, 146, 60, 0.3); }
+        .tab-nav { display: flex; gap: 12px; border-bottom: 1px solid rgba(59, 130, 246, 0.2); overflow-x: auto; padding-bottom: 16px; margin-bottom: 32px; }
+        .tab-btn { padding: 10px 20px; border: none; background: transparent; color: #94a3b8; cursor: pointer; font-weight: 500; transition: all 0.3s ease; border-bottom: 2px solid transparent; white-space: nowrap; }
+        .tab-btn:hover { color: #cbd5e1; }
+        .tab-btn.active { color: #3b82f6; border-bottom-color: #3b82f6; }
+        
+        body.light-mode .tab-btn { color: #64748b; }
+        body.light-mode .tab-btn:hover { color: #475569; }
+        body.light-mode .tab-btn.active { color: #3b82f6; }
+        .hash-display { background: rgba(0, 0, 0, 0.4); border-radius: 8px; padding: 12px 16px; font-family: 'Courier New', monospace; font-size: 12px; color: #10b981; word-break: break-all; border: 1px solid rgba(16, 185, 129, 0.2); }
+        
+        body.light-mode .hash-display { background: rgba(240, 253, 244, 1); color: #059669; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .stat-card { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; padding: 24px; transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-4px); border-color: rgba(59, 130, 246, 0.4); }
+        .timeline-item { display: flex; gap: 20px; margin-bottom: 24px; }
+        .timeline-dot { width: 40px; height: 40px; background: linear-gradient(135deg, #3b82f6, #2563eb); border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; border: 2px solid rgba(59, 130, 246, 0.5); }
+        .notification { position: fixed; top: 24px; right: 24px; padding: 16px 24px; border-radius: 10px; display: flex; align-items: center; gap: 12px; z-index: 1000; animation: slideRight 0.3s ease-out; }
+        .notification.success { background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; }
+        .notification.error { background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; }
+        .hidden { display: none; }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 min-h-screen p-4 md:p-8">
-
-<!-- Floating Background Shapes -->
-<div class="fixed inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-    <div class="absolute top-40 right-10 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style="animation-delay: 2s;"></div>
-    <div class="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style="animation-delay: 4s;"></div>
-</div>
-
-<div class="max-w-5xl mx-auto relative z-10">
+<body class="min-h-screen">
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+        <span id="themeIcon">🌙</span>
+    </button>
     
-    <!-- Header Section -->
-    <div class="text-center mb-12 fade-in">
-        <div class="inline-flex items-center justify-center mb-6">
-            <div class="relative">
-                <div class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur-lg opacity-50 pulse-ring"></div>
-                <div class="relative gradient-bg p-4 rounded-2xl shadow-2xl float">
-                    <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                    </svg>
-                </div>
-            </div>
-        </div>
-        <h1 class="text-5xl md:text-6xl font-black mb-4">
-            <span class="gradient-text">⚖️ VeriCourt</span>
-        </h1>
-        <p class="text-xl text-gray-700 font-medium mb-3">
-            Court-Ready Digital Evidence Integrity System
-        </p>
-        <p class="text-sm text-gray-500 max-w-2xl mx-auto">
-            Secure your evidence with cryptographic hashing • Detect tampering instantly • Maintain chain of custody
-        </p>
-    </div>
-
-    <!-- Main Container -->
-    <div class="glass-effect shadow-2xl rounded-3xl p-8 mb-8 slide-in">
-
-        <!-- ================= REGISTER SECTION ================= -->
-        <div class="section-card border-2 border-blue-100 bg-gradient-to-br from-blue-50/50 to-white rounded-2xl p-6 mb-8 hover-lift">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-xl shadow-lg">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">📥 Step 1: Register Evidence</h2>
-                    <p class="text-sm text-gray-500">Create cryptographic fingerprint of your evidence</p>
-                </div>
-            </div>
-
-            <div class="space-y-5">
-                <div>
-                    <label class="block mb-2 text-sm font-bold text-gray-700 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                        </svg>
-                        Evidence ID / Title
-                    </label>
-                    <input id="title" 
-                           class="w-full border-2 border-gray-300 p-3.5 rounded-xl focus:border-blue-500 focus:outline-none transition-all text-gray-900 font-medium"
-                           placeholder="Accident_Video_01">
-                </div>
-
-                <div>
-                    <label class="block mb-2 text-sm font-bold text-gray-700 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                        </svg>
-                        Source Type
-                    </label>
-                    <select id="source" 
-                            class="w-full border-2 border-gray-300 p-3.5 rounded-xl focus:border-blue-500 focus:outline-none transition-all text-gray-900 font-medium">
-                        <option value="CCTV">🎥 Official CCTV</option>
-                        <option value="DASHCAM">🚗 Dashcam</option>
-                        <option value="MOBILE">📱 Mobile Phone</option>
-                        <option value="FORWARDED">📤 Forwarded / Unknown</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block mb-2 text-sm font-bold text-gray-700 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                        </svg>
-                        Upload Evidence File
-                    </label>
-                    <div class="relative">
-                        <input type="file" id="registerFile" class="hidden" onchange="handleFileSelect(this, 'registerFileName')">
-                        <div id="registerDropZone" 
-                             class="border-3 border-dashed border-gray-300 bg-white rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 hover:border-blue-400 hover:bg-blue-50/50 hover:scale-[1.01]"
-                             onclick="document.getElementById('registerFile').click()">
-                            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                            </svg>
-                            <p class="text-gray-700 font-semibold mb-2 text-lg">Drop your file here or click to browse</p>
-                            <p class="text-sm text-gray-500 mb-1" id="registerFileName">No file selected</p>
-                            <p class="text-xs text-gray-400">Supports: Video, Images, Documents (Max 100MB)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <button onclick="registerEvidence()"
-                        class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold px-6 py-4 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center gap-3 group">
-                    <svg class="w-6 h-6 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                    </svg>
-                    <span class="text-lg">Register Evidence</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- ================= REGISTRATION RESULT ================= -->
-        <div id="registerResult" class="hidden section-card border-2 border-green-400 bg-gradient-to-br from-green-50 to-white rounded-2xl p-6 mb-8 scale-in">
-            <div class="flex items-center gap-4 mb-6">
-                <div class="bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-2xl shadow-xl">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-800">✅ Registration Successful</h3>
-                    <p class="text-sm text-gray-600">Evidence secured with cryptographic hash</p>
-                </div>
-            </div>
-
-            <div class="space-y-4">
-                <div class="bg-white border-l-4 border-green-500 rounded-xl p-4 shadow-sm hover-lift">
-                    <p class="text-sm font-semibold text-gray-500 mb-1">Evidence ID:</p>
-                    <p class="text-lg font-bold text-gray-900" id="resEvidenceId"></p>
-                </div>
-
-                <div class="bg-white border-l-4 border-blue-500 rounded-xl p-4 shadow-sm hover-lift">
-                    <p class="text-sm font-semibold text-gray-500 mb-1">Hash:</p>
-                    <p class="text-sm font-mono text-blue-700 break-all leading-relaxed" id="resHash"></p>
-                </div>
-
-                <div class="bg-white border-l-4 border-amber-500 rounded-xl p-4 shadow-sm hover-lift">
-                    <p class="text-sm font-semibold text-gray-500 mb-1">Pre-Entry Risk:</p>
-                    <p class="text-lg font-bold text-amber-700" id="resRisk"></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= VERIFY SECTION ================= -->
-        <div class="section-card border-2 border-purple-100 bg-gradient-to-br from-purple-50/50 to-white rounded-2xl p-6 mb-8 hover-lift">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-3 rounded-xl shadow-lg">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-800">🔍 Step 2: Verify Evidence Integrity</h2>
-                    <p class="text-sm text-gray-500">Check if evidence has been tampered with</p>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-amber-400 rounded-xl p-4 mb-6">
-                <div class="flex items-start gap-3">
-                    <svg class="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-                    </svg>
-                    <div>
-                        <p class="text-sm text-amber-900 font-medium">
-                            Upload the <b>same file again</b>. Any modification will be detected.
-                        </p>
-                        <p class="text-xs text-amber-700 mt-1">
-                            Our SHA-256 algorithm detects even single-byte changes
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="space-y-5">
-                <div>
-                    <label class="block mb-2 text-sm font-bold text-gray-700 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        Upload File for Verification
-                    </label>
-                    <div class="relative">
-                        <input type="file" id="verifyFile" class="hidden" onchange="handleFileSelect(this, 'verifyFileName')">
-                        <div id="verifyDropZone"
-                             class="border-3 border-dashed border-gray-300 bg-white rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 hover:border-purple-400 hover:bg-purple-50/50 hover:scale-[1.01]"
-                             onclick="document.getElementById('verifyFile').click()">
-                            <svg class="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <p class="text-gray-700 font-semibold mb-2 text-lg">Drop your file here to verify</p>
-                            <p class="text-sm text-gray-500 mb-1" id="verifyFileName">No file selected</p>
-                            <p class="text-xs text-gray-400">Must match the registered file exactly</p>
-                        </div>
-                    </div>
-                </div>
-
-                <button onclick="verifyEvidence()"
-                        class="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold px-6 py-4 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center gap-3 group">
-                    <svg class="w-6 h-6 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                    <span class="text-lg">Verify Evidence</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- ================= VERIFICATION RESULT ================= -->
-        <div id="verifyResult" class="hidden section-card rounded-2xl p-6 mb-8 scale-in">
-            <div class="flex items-center gap-4 mb-4">
-                <div id="verifyIcon" class="p-4 rounded-2xl shadow-xl">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-800">🧪 Verification Result</h3>
-                    <p class="text-sm text-gray-600">Analysis complete</p>
-                </div>
-            </div>
-            <div class="bg-white border-l-4 rounded-xl p-5 shadow-sm" id="verifyMessageBox">
-                <p id="verifyMessage" class="text-lg font-semibold"></p>
-            </div>
-        </div>
-
-        <!-- ================= COMING SOON ================= -->
-       <!-- ================= COMING SOON ================= -->
-<div class="section-card border-2 border-amber-100 bg-gradient-to-br from-amber-50/50 to-white rounded-2xl p-6 hover-lift">
-    <div class="flex items-center gap-3 mb-6">
-        <div class="bg-gradient-to-br from-amber-500 to-amber-600 p-3 rounded-xl shadow-lg">
-            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-        </div>
-        <div>
-            <h2 class="text-2xl font-bold text-gray-800">🚧 Coming Soon</h2>
-            <p class="text-sm text-gray-500">Advanced features in development</p>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Multi-Evidence Corroboration -->
-        <div class="bg-white border-l-4 border-purple-400 rounded-xl p-4 shadow-sm hover-lift">
-            <div class="flex items-start gap-3">
-                <div class="bg-purple-100 p-2 rounded-lg">
-                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="font-bold text-gray-800 mb-1">Multi-Evidence Corroboration</h3>
-                    <p class="text-xs text-gray-600">Cross-verify multiple evidence sources</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- AI Manipulation Detection -->
-        <div class="bg-white border-l-4 border-purple-400 rounded-xl p-4 shadow-sm hover-lift">
-            <div class="flex items-start gap-3">
-                <div class="bg-purple-100 p-2 rounded-lg">
-                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-3.314 0-6 3-6 6s2.686 6 6 6 6-3 6-6-2.686-6-6-6zM12 14a2 2 0 100-4 2 2 0 000 4z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="font-bold text-gray-800 mb-1">AI Manipulation Detection</h3>
-                    <p class="text-xs text-gray-600">Detect deepfakes and alterations</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Chain-of-Custody Timeline -->
-        <div class="bg-white border-l-4 border-green-400 rounded-xl p-4 shadow-sm hover-lift">
-            <div class="flex items-start gap-3">
-                <div class="bg-green-100 p-2 rounded-lg">
-                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="font-bold text-gray-800 mb-1">Chain-of-Custody Timeline</h3>
-                    <p class="text-xs text-gray-600">Complete audit trail with timestamps</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Judge & Police Dashboards -->
-        <div class="bg-white border-l-4 border-red-400 rounded-xl p-4 shadow-sm hover-lift">
-            <div class="flex items-start gap-3">
-                <div class="bg-red-100 p-2 rounded-lg">
-                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="font-bold text-gray-800 mb-1">Judge & Police Dashboards</h3>
-                    <p class="text-xs text-gray-600">Real-time case management portals</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-    
-
-<script>
-    let savedEvidenceId = null;
-
-    // Drag and drop handlers
-    function setupDragAndDrop(dropZoneId, fileInputId) {
-        const dropZone = document.getElementById(dropZoneId);
+    <div class="max-w-7xl mx-auto px-4 py-8">
         
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
-        });
+        <!-- Header -->
+        <div class="text-center mb-12 fade-in">
+            <h1 class="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                VeriCourt
+            </h1>
+            <p class="text-lg text-slate-300 mb-2">Digital Evidence Integrity Platform</p>
+            <p class="text-slate-400">Professional-grade cryptographic verification for legal proceedings</p>
+        </div>
 
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
+        <!-- Main Container -->
+        <div class="glass-dark rounded-2xl p-8 mb-8">
 
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => {
-                dropZone.classList.add('drag-over');
-            }, false);
-        });
+            <!-- Tab Navigation -->
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="showTab('register', event)">📥 Register Evidence</button>
+                <button class="tab-btn" onclick="showTab('verify', event)">🔍 Verify Evidence</button>
+                <button class="tab-btn" onclick="showTab('multi', event)">🔗 Case Analysis</button>
+                <button class="tab-btn" onclick="showTab('chain', event)">⏱️ Audit Trail</button>
+                <button class="tab-btn" onclick="showTab('dashboard', event)">📊 Dashboard</button>
+            </div>
 
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => {
-                dropZone.classList.remove('drag-over');
-            }, false);
-        });
+            <!-- Register Tab -->
+            <div id="tab-register" class="tab-content">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h2 class="text-2xl font-bold mb-6">Register Evidence</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Evidence ID *</label>
+                                <input id="evidenceId" type="text" class="input-field w-full" placeholder="CASE2025_VID_001">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Case Number</label>
+                                <input id="caseNumber" type="text" class="input-field w-full" placeholder="CR-2025-1234">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Officer Name *</label>
+                                <input id="uploaderName" type="text" class="input-field w-full" placeholder="Officer John Doe">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Source Type *</label>
+                                <select id="sourceType" class="input-field w-full">
+                                    <option value="CCTV">🎥 Official CCTV System</option>
+                                    <option value="DASHCAM">🚗 Vehicle Dashcam</option>
+                                    <option value="MOBILE">📱 Mobile Device</option>
+                                    <option value="FORWARDED">📤 Third-party Source</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-        dropZone.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            document.getElementById(fileInputId).files = files;
-            handleFileSelect(document.getElementById(fileInputId), dropZoneId.replace('DropZone', 'FileName'));
-        }, false);
-    }
+                    <div>
+                        <h2 class="text-2xl font-bold mb-6">Upload File</h2>
+                        <input type="file" id="registerFile" class="hidden" onchange="handleFileSelect(this, 'registerFileName')">
+                        <div id="registerDropZone" class="drop-zone mb-6">
+                            <svg class="w-16 h-16 mx-auto mb-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p class="font-semibold mb-2">Drop evidence file or click</p>
+                            <p class="text-sm text-slate-400 mb-2" id="registerFileName">No file selected</p>
+                            <p class="text-xs text-slate-500">Video, Images, Documents • Max 100MB</p>
+                        </div>
+                        <button onclick="registerEvidence()" class="btn-primary w-full">Register & Verify</button>
+                    </div>
+                </div>
 
-    setupDragAndDrop('registerDropZone', 'registerFile');
-    setupDragAndDrop('verifyDropZone', 'verifyFile');
+                <div id="registerResult" class="hidden mt-8 glass-dark border border-green-500/30 rounded-2xl p-8">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center gap-3">
+                            <div class="text-4xl">✅</div>
+                            <div>
+                                <h3 class="text-2xl font-bold">Registration Successful</h3>
+                                <p class="text-slate-400">Evidence secured with cryptographic verification</p>
+                            </div>
+                        </div>
+                        <button onclick="downloadEvidencePDF('register')" class="btn-primary flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
 
-    function handleFileSelect(input, displayId) {
-        if (input.files && input.files[0]) {
-            const file = input.files[0];
-            const fileName = file.name;
-            const fileSize = (file.size / 1024 / 1024).toFixed(2);
-            document.getElementById(displayId).textContent = `${fileName} (${fileSize} MB)`;
-        }
-    }
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div class="glass-dark rounded-xl p-4 border border-blue-500/20">
+                            <p class="text-sm text-slate-400 mb-1">Evidence ID</p>
+                            <p class="text-lg font-bold" id="resEvidenceId"></p>
+                        </div>
+                        <div class="glass-dark rounded-xl p-4 border border-blue-500/20">
+                            <p class="text-sm text-slate-400 mb-1">Risk Assessment</p>
+                            <p class="text-lg font-bold" id="resRisk"></p>
+                        </div>
+                    </div>
 
-    async function registerEvidence() {
-        const file = document.getElementById("registerFile").files[0];
-        const title = document.getElementById("title").value;
-        const source = document.getElementById("source").value;
+                    <div class="glass-dark rounded-xl p-4 border border-blue-500/20 mb-4">
+                        <p class="text-sm text-slate-400 mb-2">SHA-256 Checksum</p>
+                        <div class="hash-display" id="resHash"></div>
+                    </div>
 
-        if (!file || !title) {
-            showNotification("Evidence ID and file are required", "error");
-            return;
-        }
+                    <div id="detectionResult" class="glass-dark rounded-xl p-4 border border-blue-500/20">
+                        <p class="text-sm text-slate-400 mb-2">Authenticity Check</p>
+                        <div id="detectionContent"></div>
+                    </div>
+                </div>
+            </div>
 
-        // Show loading state
-        const btn = event.target;
-        const originalContent = btn.innerHTML;
-        btn.innerHTML = '<svg class="animate-spin h-6 w-6 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
-        btn.disabled = true;
+            <!-- Verify Tab -->
+            <div id="tab-verify" class="tab-content hidden">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h2 class="text-2xl font-bold mb-6">Verify Integrity</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Evidence ID *</label>
+                                <input id="verifyEvidenceId" type="text" class="input-field w-full" placeholder="Enter Evidence ID">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Verifier Name</label>
+                                <input id="verifierName" type="text" class="input-field w-full" placeholder="Your Name">
+                            </div>
+                        </div>
+                    </div>
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("evidence_id", title);
-        formData.append("source_type", source);
-        formData.append("uploader_claim", "Declared by uploader");
+                    <div>
+                        <h2 class="text-2xl font-bold mb-6">Upload File</h2>
+                        <input type="file" id="verifyFile" class="hidden" onchange="handleFileSelect(this, 'verifyFileName')">
+                        <div id="verifyDropZone" class="drop-zone mb-6">
+                            <svg class="w-16 h-16 mx-auto mb-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p class="font-semibold mb-2">Drop file to verify</p>
+                            <p class="text-sm text-slate-400" id="verifyFileName">No file selected</p>
+                        </div>
+                        <button onclick="verifyEvidence()" class="btn-primary w-full">Verify Integrity</button>
+                    </div>
+                </div>
 
-        try {
-            const response = await fetch("/register", {
-                method: "POST",
-                body: formData
-            });
+                <div id="verifyResult" class="hidden mt-8 rounded-2xl p-8" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%); border: 1px solid rgba(16, 185, 129, 0.3);">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div id="verifyIcon" class="text-4xl"></div>
+                            <div>
+                                <h3 class="text-2xl font-bold" id="verifyTitle"></h3>
+                                <p class="text-slate-400" id="verifyTimestamp"></p>
+                            </div>
+                        </div>
+                        <button onclick="downloadEvidencePDF('verify')" class="btn-primary flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                    <div id="verifyContent" class="glass-dark rounded-xl p-4 border border-green-500/20"></div>
+                </div>
+            </div>
 
-            const data = await response.json();
+            <!-- Case Analysis Tab -->
+            <div id="tab-multi" class="tab-content hidden">
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold mb-6">Create Case</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Case ID *</label>
+                                <input id="multiCaseId" type="text" class="input-field w-full" placeholder="CASE-2025-001">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Case Name</label>
+                                <input id="multiCaseName" type="text" class="input-field w-full" placeholder="Investigation Name">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Lead Investigator</label>
+                                <input id="multiInvestigator" type="text" class="input-field w-full" placeholder="Detective Name">
+                            </div>
+                        </div>
+                    </div>
 
-            savedEvidenceId = data.evidence_id;
+                    <div>
+                        <h2 class="text-2xl font-bold mb-6">Link Evidence</h2>
+                        <label class="block text-sm font-medium mb-2">Evidence IDs (comma-separated) *</label>
+                        <textarea id="multiEvidenceIds" class="input-field w-full mb-4" rows="5" placeholder="CASE2025_VID_001, CASE2025_VID_002"></textarea>
+                        <button onclick="createMultiEvidenceCase()" class="btn-primary w-full">Analyze Case</button>
+                    </div>
+                </div>
 
-            document.getElementById("resEvidenceId").innerText = data.evidence_id;
-            document.getElementById("resHash").innerText = data.hash;
-            document.getElementById("resRisk").innerText = data.pre_entry_risk;
+                <div id="multiResult" class="hidden glass-dark border border-blue-500/20 rounded-2xl p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-bold">📊 Corroboration Report</h3>
+                        <button onclick="downloadEvidencePDF('multi')" class="btn-primary flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                    <div id="multiContent"></div>
+                </div>
+            </div>
 
-            const resultDiv = document.getElementById("registerResult");
-            resultDiv.classList.remove("hidden");
+            <!-- Audit Trail Tab -->
+            <div id="tab-chain" class="tab-content hidden">
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h2 class="text-2xl font-bold mb-6">View Audit Trail</h2>
+                        <label class="block text-sm font-medium mb-2">Evidence ID *</label>
+                        <input id="chainEvidenceId" type="text" class="input-field w-full mb-4" placeholder="Enter Evidence ID">
+                        <button onclick="viewChainOfCustody()" class="btn-primary w-full">Load Trail</button>
+                    </div>
+                </div>
+
+                <div id="chainResult" class="hidden glass-dark border border-blue-500/20 rounded-2xl p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-2xl font-bold">⏱️ Complete Custody Record</h3>
+                        <button onclick="downloadEvidencePDF('chain')" class="btn-primary flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Download PDF
+                        </button>
+                    </div>
+                    <div id="chainContent"></div>
+                </div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="tab-dashboard" class="tab-content hidden">
+                <h2 class="text-2xl font-bold mb-8">System Overview</h2>
+                
+                <div class="grid md:grid-cols-4 gap-4 mb-8">
+                    <div class="stat-card">
+                        <p class="text-sm text-slate-400 mb-2">Total Evidence</p>
+                        <p class="text-4xl font-bold" id="dashTotal">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="text-sm text-slate-400 mb-2">Active Cases</p>
+                        <p class="text-4xl font-bold" id="dashCases">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="text-sm text-slate-400 mb-2">Flagged Items</p>
+                        <p class="text-4xl font-bold text-orange-400" id="dashFlagged">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="text-sm text-slate-400 mb-2">Verified Safe</p>
+                        <p class="text-4xl font-bold text-green-400" id="dashSafe">0</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="glass-dark rounded-2xl border border-blue-500/20 p-8">
+                        <h3 class="text-xl font-bold mb-6">Risk Distribution</h3>
+                        <div id="dashRisk" class="space-y-4"></div>
+                    </div>
+
+                    <div class="glass-dark rounded-2xl border border-blue-500/20 p-8">
+                        <h3 class="text-xl font-bold mb-6">Recent Submissions</h3>
+                        <div id="dashRecent" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center text-slate-500 text-sm mt-8">
+            <p>🔒 SHA-256 Cryptographic Hash • 🛡️ Forensic Grade Authentication</p>
+            <p>VeriCourt © 2025 • Securing Digital Justice</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+
+        // Store current data for PDF generation
+        let currentData = {
+            register: null,
+            verify: null,
+            multi: null,
+            chain: null
+        };
+
+        // Theme Toggle Function
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
             
-            // Smooth scroll to result
-            setTimeout(() => {
-                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
-
-            showNotification("Evidence registered successfully!", "success");
-
-        } catch (error) {
-            showNotification("Registration failed. Please try again.", "error");
-            console.error("Error:", error);
-        } finally {
-            btn.innerHTML = originalContent;
-            btn.disabled = false;
-        }
-    }
-
-    async function verifyEvidence() {
-        const file = document.getElementById("verifyFile").files[0];
-
-        if (!file || !savedEvidenceId) {
-            showNotification("Register evidence first, then verify", "error");
-            return;
-        }
-
-        // Show loading state
-        const btn = event.target;
-        const originalContent = btn.innerHTML;
-        btn.innerHTML = '<svg class="animate-spin h-6 w-6 text-white mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
-        btn.disabled = true;
-
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("evidence_id", savedEvidenceId);
-
-        try {
-            const response = await fetch("/verify", {
-                method: "POST",
-                body: formData
-            });
-
-            const data = await response.json();
-
-            const box = document.getElementById("verifyResult");
-            const msg = document.getElementById("verifyMessage");
-            const msgBox = document.getElementById("verifyMessageBox");
-            const icon = document.getElementById("verifyIcon");
-
-            if (data.integrity_status === "INTACT") {
-                msg.innerHTML = "✅ <b>Integrity Intact:</b> No tampering detected.";
-                box.className = "section-card border-2 border-green-400 bg-gradient-to-br from-green-50 to-white rounded-2xl p-6 mb-8 scale-in";
-                msgBox.className = "bg-white border-l-4 border-green-500 rounded-xl p-5 shadow-sm";
-                icon.className = "bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-2xl shadow-xl";
-                icon.innerHTML = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
-                showNotification("Verification successful: Evidence is intact!", "success");
+            body.classList.toggle('light-mode');
+            
+            if (body.classList.contains('light-mode')) {
+                themeIcon.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
             } else {
-                msg.innerHTML = "🚨 <b>Integrity Broken:</b> Evidence has been modified.";
-                box.className = "section-card border-2 border-red-400 bg-gradient-to-br from-red-50 to-white rounded-2xl p-6 mb-8 scale-in";
-                msgBox.className = "bg-white border-l-4 border-red-500 rounded-xl p-5 shadow-sm";
-                icon.className = "bg-gradient-to-br from-red-500 to-red-600 p-4 rounded-2xl shadow-xl";
-                icon.innerHTML = '<svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
-                showNotification("Warning: Evidence tampering detected!", "error");
+                themeIcon.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+                themeIcon.textContent = '☀️';
+            }
+        });
+
+        function showTab(tabName, event) {
+            event.preventDefault();
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            if (tabName === 'dashboard') loadDashboard();
+        }
+
+        function handleFileSelect(input, displayId) {
+            if (input.files[0]) {
+                const file = input.files[0];
+                const size = (file.size / 1024 / 1024).toFixed(2);
+                document.getElementById(displayId).textContent = `${file.name} (${size} MB)`;
+            }
+        }
+
+        function showNotification(message, type) {
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.innerHTML = `<span>${type === 'success' ? '✓' : '⚠'}</span><span>${message}</span>`;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 4000);
+        }
+
+        async function registerEvidence() {
+            const file = document.getElementById('registerFile').files[0];
+            const evidenceId = document.getElementById('evidenceId').value.trim();
+            const uploaderName = document.getElementById('uploaderName').value.trim();
+            const sourceType = document.getElementById('sourceType').value;
+            const caseNumber = document.getElementById('caseNumber').value.trim();
+
+            if (!file || !evidenceId || !uploaderName) {
+                showNotification('Please complete all required fields', 'error');
+                return;
             }
 
-            box.classList.remove("hidden");
-            
-            // Smooth scroll to result
-            setTimeout(() => {
-                box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('evidence_id', evidenceId);
+            formData.append('uploader_name', uploaderName);
+            formData.append('source_type', sourceType);
+            formData.append('case_number', caseNumber);
 
-        } catch (error) {
-            showNotification("Verification failed. Please try again.", "error");
-            console.error("Error:", error);
-        } finally {
-            btn.innerHTML = originalContent;
-            btn.disabled = false;
+            try {
+                const res = await fetch(`${API_BASE}/register`, { method: 'POST', body: formData });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                // Store data for PDF
+                currentData.register = {
+                    ...data,
+                    uploader_name: uploaderName,
+                    case_number: caseNumber,
+                    source_type: sourceType,
+                    file_name: file.name,
+                    file_size: (file.size / 1024 / 1024).toFixed(2)
+                };
+
+                document.getElementById('resEvidenceId').textContent = data.evidence_id;
+                document.getElementById('resHash').textContent = data.hash;
+                document.getElementById('resRisk').textContent = data.pre_entry_risk;
+
+                const detection = data.ai_detection;
+                const detectionDiv = document.getElementById('detectionContent');
+                if (detection.is_manipulated) {
+                    detectionDiv.innerHTML = `<span class="badge badge-warning">⚠️ Authentication concern</span><p class="text-sm mt-2">Type: ${detection.manipulation_type}</p>`;
+                } else {
+                    detectionDiv.innerHTML = `<span class="badge badge-success">✅ Verified authentic</span><p class="text-sm mt-2">No concerns detected</p>`;
+                }
+                document.getElementById('registerResult').classList.remove('hidden');
+                showNotification('Evidence registered successfully', 'success');
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
         }
-    }
 
-    // Notification system
-    function showNotification(message, type) {
-        const notification = document.createElement('div');
-        const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
-        
-        notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3 fade-in`;
-        notification.innerHTML = `
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' : 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'}"></path>
-            </svg>
-            <span class="font-semibold">${message}</span>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            notification.style.transform = 'translateX(100%)';
-            notification.style.transition = 'all 0.3s ease';
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-    }
-</script>
+        async function verifyEvidence() {
+            const file = document.getElementById('verifyFile').files[0];
+            const evidenceId = document.getElementById('verifyEvidenceId').value.trim();
+            const verifierName = document.getElementById('verifierName').value.trim() || 'Anonymous';
 
+            if (!file || !evidenceId) {
+                showNotification('Please provide evidence ID and file', 'error');
+                return;
+            }
 
- <!-- Footer -->
-    <div class="text-center mt-8 fade-in">
-        <p class="text-sm text-gray-500">
-            🔒 Powered by SHA-256 Cryptographic Hashing • Built for Legal Compliance
-        </p>
-        <p class="text-xs text-gray-400 mt-2">
-            VeriCourt © 2025 • Ensuring Evidence Integrity for Justice
-        </p>
-    </div>
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('evidence_id', evidenceId);
+            formData.append('verifier_name', verifierName);
+
+            try {
+                const res = await fetch(`${API_BASE}/verify`, { method: 'POST', body: formData });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                // Store data for PDF
+                currentData.verify = {
+                    ...data,
+                    evidence_id: evidenceId,
+                    verifier_name: verifierName,
+                    file_name: file.name,
+                    file_size: (file.size / 1024 / 1024).toFixed(2)
+                };
+
+                const resultDiv = document.getElementById('verifyResult');
+                const icon = document.getElementById('verifyIcon');
+                const content = document.getElementById('verifyContent');
+                const title = document.getElementById('verifyTitle');
+                const timestamp = document.getElementById('verifyTimestamp');
+
+                timestamp.textContent = `Verified at ${new Date(data.verification_timestamp).toLocaleString()}`;
+
+                if (data.integrity_status === 'INTACT') {
+                    title.textContent = '✅ Integrity Verified';
+                    icon.textContent = '✅';
+                    content.innerHTML = '<p class="text-green-400 font-semibold">No tampering detected</p>';
+                    showNotification('Evidence is intact', 'success');
+                } else {
+                    title.textContent = '🚨 Integrity Compromised';
+                    icon.textContent = '🚨';
+                    content.innerHTML = '<p class="text-red-400 font-semibold">Evidence has been modified</p>';
+                    showNotification('Evidence tampering detected', 'error');
+                }
+                resultDiv.classList.remove('hidden');
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+
+        async function createMultiEvidenceCase() {
+            const caseId = document.getElementById('multiCaseId').value.trim();
+            const caseName = document.getElementById('multiCaseName').value.trim();
+            const investigator = document.getElementById('multiInvestigator').value.trim();
+            const evidenceIdsStr = document.getElementById('multiEvidenceIds').value.trim();
+
+            if (!caseId || !evidenceIdsStr) {
+                showNotification('Please provide case ID and evidence IDs', 'error');
+                return;
+            }
+
+            const evidenceIds = evidenceIdsStr.split(',').map(id => id.trim());
+
+            try {
+                const res = await fetch(`${API_BASE}/multi-evidence/create-case`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ case_id: caseId, case_name: caseName, investigator, evidence_ids: evidenceIds })
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                const analyzeRes = await fetch(`${API_BASE}/multi-evidence/corroborate/${caseId}`);
+                const analyzeData = await analyzeRes.json();
+
+                // Store data for PDF
+                currentData.multi = {
+                    case_id: caseId,
+                    case_name: caseName,
+                    investigator: investigator,
+                    ...analyzeData
+                };
+
+                const content = document.getElementById('multiContent');
+                content.innerHTML = `
+                    <div class="glass-dark rounded-xl p-5 border border-blue-500/20 mb-4">
+                        <h4 class="font-bold mb-3">Case Summary</h4>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div><p class="text-sm text-slate-400">Case ID</p><p class="font-semibold">${caseId}</p></div>
+                            <div><p class="text-sm text-slate-400">Total Evidence</p><p class="font-semibold">${analyzeData.total_evidence}</p></div>
+                            <div><p class="text-sm text-slate-400">Score</p><p class="font-semibold text-blue-400">${analyzeData.corroboration_score}%</p></div>
+                        </div>
+                    </div>
+                    <div class="glass-dark rounded-xl p-5 border border-blue-500/20">
+                        <h4 class="font-bold mb-3">Evidence Details</h4>
+                        ${analyzeData.evidence_details.map(ev => `<div class="border-l-4 border-blue-400 pl-4 py-2"><p class="font-semibold text-sm">${ev.evidence_id}</p><p class="text-xs text-slate-400">${ev.source_type} | ${ev.risk}</p></div>`).join('')}
+                    </div>
+                `;
+                document.getElementById('multiResult').classList.remove('hidden');
+                showNotification('Case analyzed successfully', 'success');
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+
+        async function viewChainOfCustody() {
+            const evidenceId = document.getElementById('chainEvidenceId').value.trim();
+
+            if (!evidenceId) {
+                showNotification('Please enter evidence ID', 'error');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/chain-of-custody/${evidenceId}`);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                // Store data for PDF
+                currentData.chain = {
+                    evidence_id: evidenceId,
+                    ...data
+                };
+
+                const content = document.getElementById('chainContent');
+                if (data.chain.length === 0) {
+                    content.innerHTML = '<p class="text-slate-500 text-center py-4">No audit records found</p>';
+                } else {
+                    content.innerHTML = data.chain.map((entry, i) => `
+                        <div class="timeline-item">
+                            <div class="timeline-dot">${i + 1}</div>
+                            <div class="flex-1">
+                                <div class="glass-dark rounded-xl p-4 border border-blue-500/20">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <p class="font-bold">${entry.action}</p>
+                                        <span class="text-xs text-slate-400">${new Date(entry.timestamp).toLocaleString()}</span>
+                                    </div>
+                                    <p class="text-sm">Officer: ${entry.user}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+                document.getElementById('chainResult').classList.remove('hidden');
+                showNotification('Audit trail loaded', 'success');
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+
+        // PDF Download Function
+        async function downloadEvidencePDF(type) {
+            const data = currentData[type];
+            if (!data) {
+                showNotification('No data available to download. Please complete an action first.', 'error');
+                return;
+            }
+
+            showNotification('Generating PDF...', 'success');
+
+            try {
+                let endpoint = '';
+                let body = {};
+
+                switch(type) {
+                    case 'register':
+                        endpoint = '/download-pdf/evidence';
+                        body = { evidence_id: data.evidence_id };
+                        break;
+                    case 'verify':
+                        endpoint = '/download-pdf/verification';
+                        body = { evidence_id: data.evidence_id };
+                        break;
+                    case 'multi':
+                        endpoint = '/download-pdf/case';
+                        body = { case_id: data.case_id };
+                        break;
+                    case 'chain':
+                        endpoint = '/download-pdf/chain';
+                        body = { evidence_id: data.evidence_id };
+                        break;
+                }
+
+                console.log('Requesting PDF:', `${API_BASE}${endpoint}`, body);
+
+                const res = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                console.log('Response status:', res.status);
+
+                if (!res.ok) {
+                    let errorMsg = 'Failed to generate PDF';
+                    try {
+                        const error = await res.json();
+                        errorMsg = error.error || errorMsg;
+                    } catch (e) {
+                        errorMsg = `Server error: ${res.status}`;
+                    }
+                    throw new Error(errorMsg);
+                }
+
+                const blob = await res.blob();
+                console.log('PDF blob size:', blob.size);
+
+                if (blob.size === 0) {
+                    throw new Error('Received empty PDF file');
+                }
+
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                let filename = '';
+                const dateStr = new Date().toISOString().split('T')[0];
+                switch(type) {
+                    case 'register':
+                    case 'verify':
+                        filename = `Evidence_${data.evidence_id}_${dateStr}.pdf`;
+                        break;
+                    case 'multi':
+                        filename = `Case_Report_${data.case_id}_${dateStr}.pdf`;
+                        break;
+                    case 'chain':
+                        filename = `Chain_of_Custody_${data.evidence_id}_${dateStr}.pdf`;
+                        break;
+                }
+                
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                }, 100);
+                
+                showNotification('PDF downloaded successfully!', 'success');
+            } catch (err) {
+                console.error('PDF download error:', err);
+                showNotification('PDF Download Error: ' + err.message, 'error');
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const statsRes = await fetch(`${API_BASE}/dashboard/stats`);
+                const stats = await statsRes.json();
+                const listRes = await fetch(`${API_BASE}/evidence/list`);
+                const list = await listRes.json();
+
+                document.getElementById('dashTotal').textContent = stats.total_evidence;
+                document.getElementById('dashCases').textContent = stats.total_cases;
+                document.getElementById('dashFlagged').textContent = stats.ai_flagged_count;
+                document.getElementById('dashSafe').textContent = stats.risk_distribution.LOW || 0;
+
+                const riskDiv = document.getElementById('dashRisk');
+                const max = Math.max(...Object.values(stats.risk_distribution), 1);
+                riskDiv.innerHTML = Object.entries(stats.risk_distribution).map(([level, count]) => `
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-semibold">${level}</span>
+                            <span class="text-sm text-slate-400">${count}</span>
+                        </div>
+                        <div class="w-full bg-slate-700 rounded-full h-2">
+                            <div class="h-2 rounded-full bg-blue-500" style="width: ${(count / max) * 100}%"></div>
+                        </div>
+                    </div>
+                `).join('');
+
+                const recentDiv = document.getElementById('dashRecent');
+                recentDiv.innerHTML = (list.evidence || []).slice(0, 5).map(ev => `
+                    <div class="border-l-4 border-blue-400 pl-4 py-2">
+                        <p class="font-semibold text-sm">${ev.evidence_id}</p>
+                        <p class="text-xs text-slate-400">${ev.source_type} | ${ev.risk}</p>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error('Dashboard error:', err);
+            }
+        }
+
+        // Setup drag & drop
+        ['registerDropZone', 'verifyDropZone'].forEach(zoneId => {
+            const zone = document.getElementById(zoneId);
+            const fileId = zoneId.replace('DropZone', 'File');
+            ['dragover', 'dragenter'].forEach(ev => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.add('drag-over'); }));
+            ['dragleave', 'drop'].forEach(ev => zone.addEventListener(ev, () => zone.classList.remove('drag-over')));
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                document.getElementById(fileId).files = e.dataTransfer.files;
+                handleFileSelect(document.getElementById(fileId), zoneId.replace('DropZone', 'FileName'));
+            });
+            zone.addEventListener('click', () => document.getElementById(fileId).click());
+        });
+    </script>
+
 </body>
 </html>
