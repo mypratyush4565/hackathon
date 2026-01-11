@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeriCourt - Digital Evidence Verification System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * { scroll-behavior: smooth; }
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        .slide-in { animation: slideIn 0.4s ease-out; }
+        .spin-loader { animation: spin 1s linear infinite; }
+        
+        .glass-effect {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(217, 119, 6, 0.2);
+        }
+        
+        .input-field {
+            background: rgba(71, 85, 105, 0.3);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #d97706;
+            background: rgba(71, 85, 105, 0.5);
+            box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+        }
+        
+        .drop-zone {
+            border: 2px dashed rgba(217, 119, 6, 0.3);
+            border-radius: 12px;
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.3);
+        }
+        
+        .drop-zone:hover {
+            border-color: #d97706;
+            background: rgba(217, 119, 6, 0.1);
+        }
+        
+        .drop-zone.drag-over {
+            border-color: #d97706;
+            background: rgba(217, 119, 6, 0.15);
+            transform: scale(1.02);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(217, 119, 6, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-verified { background: rgba(34, 197, 94, 0.2); color: #6ee7b7; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge-pending { background: rgba(217, 119, 6, 0.2); color: #fed7aa; border: 1px solid rgba(217, 119, 6, 0.3); }
+        .badge-flagged { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+        
+        .hash-display {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: 'Monaco', monospace;
+            font-size: 12px;
+            color: #10b981;
+            word-break: break-all;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        
+        .hidden { display: none; }
+        .visible { display: block; }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-100">
+    
+    <!-- Header -->
+    <header class="sticky top-0 z-50 glass-effect border-b border-amber-500/20">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                        <span style="font-size: 1.5rem;">⚖️</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent">VeriCourt</h1>
+                        <p class="text-xs text-slate-400 -mt-0.5">Digital Evidence Integrity</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <div class="hidden md:flex items-center gap-2 text-sm text-slate-400">
+                        <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                        <span>System Online</span>
+                    </div>
+
+                    <div class="flex items-center gap-2 glass-effect rounded-full px-4 py-2">
+                        <span style="font-size: 1rem;">🛡️</span>
+                        <select id="roleSelect" class="bg-transparent border-none text-sm font-medium focus:outline-none cursor-pointer text-white">
+                            <option value="UPLOADER">Uploader</option>
+                            <option value="VERIFIER">Verifier</option>
+                            <option value="JUDGE" selected>Judge</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        
+        <!-- Hero Section -->
+        <div class="mb-8 fade-in">
+            <div class="glass-effect rounded-2xl p-8 border border-amber-500/20">
+                <h2 class="text-4xl font-bold mb-2">Evidence Verification System</h2>
+                <p class="text-slate-300">
+                    Ensuring procedural trust, tamper-evidence, and transparent verification for digital court evidence.
+                    <span class="text-amber-400 font-medium"> 100% Deterministic & Auditable.</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- System Layers Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
+            <div class="glass-effect rounded-xl p-4 hover:border-amber-500/30 transition-all group cursor-default border border-slate-700/50">
+                <p style="font-size: 1.2rem;">🔐</p>
+                <p class="text-sm font-medium text-white">Trusted Capture</p>
+                <p class="text-xs text-slate-400">Cryptographic hash at source</p>
+            </div>
+            <div class="glass-effect rounded-xl p-4 hover:border-amber-500/30 transition-all group cursor-default border border-slate-700/50">
+                <p style="font-size: 1.2rem;">⏰</p>
+                <p class="text-sm font-medium text-white">Time-Anchoring</p>
+                <p class="text-xs text-slate-400">Public timestamp proof</p>
+            </div>
+            <div class="glass-effect rounded-xl p-4 hover:border-amber-500/30 transition-all group cursor-default border border-slate-700/50">
+                <p style="font-size: 1.2rem;">🔗</p>
+                <p class="text-sm font-medium text-white">Chain of Custody</p>
+                <p class="text-xs text-slate-400">Zero-trust access log</p>
+            </div>
+            <div class="glass-effect rounded-xl p-4 hover:border-amber-500/30 transition-all group cursor-default border border-slate-700/50">
+                <p style="font-size: 1.2rem;">📊</p>
+                <p class="text-sm font-medium text-white">Evidence Weighting</p>
+                <p class="text-xs text-slate-400">Source-based scoring</p>
+            </div>
+            <div class="glass-effect rounded-xl p-4 hover:border-amber-500/30 transition-all group cursor-default border border-slate-700/50">
+                <p style="font-size: 1.2rem;">⚖️</p>
+                <p class="text-sm font-medium text-white">Admissibility Score</p>
+                <p class="text-xs text-slate-400">0-100 trust metric</p>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex gap-2 mb-6 overflow-x-auto pb-2 border-b border-slate-700/50">
+            <button onclick="switchTab('register')" id="tab-register" class="flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all whitespace-nowrap bg-amber-500 text-slate-900">
+                📥 Register Evidence
+            </button>
+            <button onclick="switchTab('verify')" id="tab-verify" class="flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all whitespace-nowrap glass-effect border border-slate-700/50 hover:border-amber-500/30">
+                🔐 Verify Integrity
+            </button>
+            <button onclick="switchTab('judge')" id="tab-judge" class="flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all whitespace-nowrap glass-effect border border-slate-700/50 hover:border-amber-500/30">
+                ⚖️ Judge Dashboard
+            </button>
+        </div>
+
+        <!-- Register Tab -->
+        <div id="content-register" class="glass-effect rounded-2xl p-6 border border-slate-700/50 slide-in">
+            <h3 class="text-xl font-bold mb-6 text-white">📥 Register New Evidence</h3>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Case ID</label>
+                        <input id="caseId" type="text" class="input-field w-full" placeholder="CASE-HC-2024-XXXX">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Officer Name</label>
+                        <input id="uploaderName" type="text" class="input-field w-full" placeholder="Officer Name / ID">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Source Type</label>
+                        <select id="sourceType" class="input-field w-full">
+                            <option value="CCTV">CCTV (High Trust - 92%)</option>
+                            <option value="BODYCAM">Body Camera (High Trust - 88%)</option>
+                            <option value="MOBILE">Mobile Device (Medium Trust - 65%)</option>
+                            <option value="FORWARDED">Forwarded Media (Low Trust - 25%)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Evidence File</label>
+                    <input type="file" id="registerFile" class="hidden" onchange="handleFileSelect(this, 'registerFileName')">
+                    <div id="registerDropZone" class="drop-zone mb-6">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                        <p class="font-semibold mb-2">Drop file or click to upload</p>
+                        <p class="text-sm text-slate-400 mb-2" id="registerFileName">No file selected</p>
+                        <p class="text-xs text-slate-500">MP4, MP3, JPG, PNG, PDF up to 500MB</p>
+                    </div>
+                    <button onclick="registerEvidence()" class="btn-primary w-full">🔒 Register & Hash Evidence</button>
+                </div>
+            </div>
+
+            <!-- Register Result -->
+            <div id="registerResult" class="hidden glass-effect border border-green-500/30 rounded-2xl p-8">
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <div class="text-4xl">✅</div>
+                        <div>
+                            <h3 class="text-2xl font-bold">Registration Successful</h3>
+                            <p class="text-slate-400">Evidence secured with cryptographic verification</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div class="glass-effect rounded-xl p-4 border border-slate-700/50">
+                        <p class="text-sm text-slate-400 mb-1">Evidence ID</p>
+                        <p class="text-lg font-bold" id="resEvidenceId"></p>
+                    </div>
+                    <div class="glass-effect rounded-xl p-4 border border-slate-700/50">
+                        <p class="text-sm text-slate-400 mb-1">Status</p>
+                        <p class="text-lg font-bold text-green-400">Registered</p>
+                    </div>
+                </div>
+
+                <div class="glass-effect rounded-xl p-4 border border-slate-700/50">
+                    <p class="text-sm text-slate-400 mb-2">SHA-256 Checksum</p>
+                    <div class="hash-display" id="resHash"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Verify Tab -->
+        <div id="content-verify" class="glass-effect rounded-2xl p-6 border border-slate-700/50 slide-in hidden">
+            <h3 class="text-xl font-bold mb-6 text-white">🔐 Verify Evidence Integrity</h3>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Evidence ID</label>
+                        <select id="verifyEvidenceId" class="input-field w-full">
+                            <option value="">Select evidence to verify...</option>
+                            <option value="EVD-2024-001">EVD-2024-001 - cctv_junction_cam03.mp4</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-300 mb-2">Verifier Name</label>
+                        <input id="verifierName" type="text" class="input-field w-full" placeholder="Your Name (Optional)">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">File to Verify</label>
+                    <input type="file" id="verifyFile" class="hidden" onchange="handleFileSelect(this, 'verifyFileName')">
+                    <div id="verifyDropZone" class="drop-zone mb-6">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p class="font-semibold mb-2">Drop file to verify</p>
+                        <p class="text-sm text-slate-400" id="verifyFileName">No file selected</p>
+                    </div>
+                    <button onclick="verifyEvidence()" class="btn-primary w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700">✓ Verify Hash Match</button>
+                </div>
+            </div>
+
+            <!-- Verify Result -->
+            <div id="verifyResult" class="hidden glass-effect border border-green-500/30 rounded-2xl p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div id="verifyIcon" class="text-4xl"></div>
+                        <div>
+                            <h3 class="text-2xl font-bold" id="verifyTitle"></h3>
+                            <p class="text-slate-400 text-sm" id="verifyTime"></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="verifyContent" class="glass-effect rounded-xl p-4 border border-slate-700/50"></div>
+            </div>
+        </div>
+
+        <!-- Judge Dashboard Tab -->
+        <div id="content-judge" class="hidden space-y-6">
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Evidence List -->
+                <div class="lg:col-span-1 glass-effect rounded-2xl p-4 border border-slate-700/50">
+                    <h3 class="text-lg font-bold mb-4 text-white">📋 Evidence Items</h3>
+                    <div id="evidenceList" class="space-y-2"></div>
+                </div>
+
+                <!-- Evidence Details -->
+                <div class="lg:col-span-2 glass-effect rounded-2xl p-6 border border-slate-700/50">
+                    <div id="evidenceDetailContainer" class="text-center text-slate-400 py-12">
+                        <p style="font-size: 2rem;">ℹ️</p>
+                        <p>Select an evidence item to view details</p>
+                    </div>
+                    <div id="evidenceDetail" class="hidden"></div>
+                </div>
+            </div>
+
+            <!-- Legal Notice -->
+            <div class="glass-effect rounded-2xl p-6 border border-amber-500/20">
+                <div class="flex items-center gap-3">
+                    <span style="font-size: 1.2rem;">ℹ️</span>
+                    <p class="text-sm text-slate-300">
+                        <span class="font-bold">Legal Notice:</span> VeriCourt ensures the integrity and admissibility of digital evidence. Final judgment always remains with the court.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-16 border-t border-slate-700/50 py-8">
+        <div class="max-w-7xl mx-auto px-6 text-center text-sm text-slate-400">
+            <p class="mb-2">
+                <span class="bg-gradient-to-r from-amber-400 to-amber-600 bg-clip-text text-transparent font-bold">VeriCourt</span> – Digital Evidence Integrity System
+            </p>
+            <p>100% Deterministic • Auditable • Court-Ready</p>
+        </div>
+    </footer>
+
+    <script>
+        // State Management
+        let currentRole = 'JUDGE';
+        let currentTab = 'register';
+        let evidenceList = [
+            {
+                id: "EVD-2024-001",
+                caseId: "CASE-HC-2024-1547",
+                fileName: "cctv_junction_cam03.mp4",
+                hash: "a7f3b2c1d4e5f6...8a9b0c1d",
+                timestamp: "2024-01-15T14:32:00Z",
+                uploader: "Officer Sharma",
+                sourceType: "CCTV",
+                weight: 92,
+                admissibilityScore: 87,
+                status: "verified",
+                custodyChain: [
+                    { action: "Captured", actor: "CCTV System", timestamp: "2024-01-15T14:32:00Z", verified: true },
+                    { action: "Hash Generated", actor: "VeriCourt", timestamp: "2024-01-15T14:32:01Z", verified: true },
+                    { action: "Uploaded", actor: "Officer Sharma", timestamp: "2024-01-15T15:00:00Z", verified: true }
+                ],
+                flags: [],
+                fileSize: 125
+            }
+        ];
+        let selectedEvidence = null;
+        let uploadedFile = null;
+        let verifyFile = null;
+
+        // Role Selection
+        document.getElementById('roleSelect').addEventListener('change', (e) => {
+            currentRole = e.target.value;
+            updateTabAccess();
+        });
+
+        function updateTabAccess() {
+            const registerBtn = document.getElementById('tab-register');
+            const verifyBtn = document.getElementById('tab-verify');
+            const judgeBtn = document.getElementById('tab-judge');
+
+            registerBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            verifyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            judgeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
+            if (currentRole === 'UPLOADER') {
+                verifyBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                judgeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else if (currentRole === 'VERIFIER') {
+                judgeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // Tab Switching
+        function switchTab(tab) {
+            currentTab = tab;
+
+            // Update tab buttons
+            document.getElementById('tab-register').classList.toggle('bg-amber-500', tab === 'register');
+            document.getElementById('tab-register').classList.toggle('text-slate-900', tab === 'register');
+            document.getElementById('tab-register').classList.toggle('glass-effect', tab !== 'register');
+            document.getElementById('tab-register').classList.toggle('border', tab !== 'register');
+
+            document.getElementById('tab-verify').classList.toggle('bg-amber-500', tab === 'verify');
+            document.getElementById('tab-verify').classList.toggle('text-slate-900', tab === 'verify');
+            document.getElementById('tab-verify').classList.toggle('glass-effect', tab !== 'verify');
+            document.getElementById('tab-verify').classList.toggle('border', tab !== 'verify');
+
+            document.getElementById('tab-judge').classList.toggle('bg-amber-500', tab === 'judge');
+            document.getElementById('tab-judge').classList.toggle('text-slate-900', tab === 'judge');
+            document.getElementById('tab-judge').classList.toggle('glass-effect', tab !== 'judge');
+            document.getElementById('tab-judge').classList.toggle('border', tab !== 'judge');
+
+            // Update content
+            document.getElementById('content-register').classList.toggle('hidden', tab !== 'register');
+            document.getElementById('content-verify').classList.toggle('hidden', tab !== 'verify');
+            document.getElementById('content-judge').classList.toggle('hidden', tab !== 'judge');
+
+            if (tab === 'judge') loadDashboard();
+        }
+
+        // File Handling
+        function handleFileSelect(input, displayId) {
+            if (input.files[0]) {
+                const file = input.files[0];
+                const size = (file.size / 1024 / 1024).toFixed(2);
+                document.getElementById(displayId).textContent = `${file.name} (${size} MB)`;
+                
+                if (displayId === 'registerFileName') uploadedFile = file;
+                if (displayId === 'verifyFileName') verifyFile = file;
+            }
+        }
+
+        // Setup Drag & Drop
+        ['registerDropZone', 'verifyDropZone'].forEach(id => {
+            const zone = document.getElementById(id);
+            const fileInputId = id.replace('DropZone', 'File');
+            
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('drag-over');
+            });
+            
+            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+            
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                document.getElementById(fileInputId).files = e.dataTransfer.files;
+                handleFileSelect(document.getElementById(fileInputId), fileInputId.replace('File', 'FileName'));
+            });
+            
+            zone.addEventListener('click', () => document.getElementById(fileInputId).click());
+        });
+
+        // SHA-256 Hash Calculation
+        async function calculateHash(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const buffer = e.target.result;
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                    resolve(hashHex.substring(0, 32) + '...');
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        // Register Evidence
+        async function registerEvidence() {
+            const caseId = document.getElementById('caseId').value.trim();
+            const uploaderName = document.getElementById('uploaderName').value.trim();
+            const sourceType = document.getElementById('sourceType').value;
+
+            if (!uploadedFile || !caseId || !uploaderName) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const hash = await calculateHash(uploadedFile);
+            const newEvidence = {
+                id: `EVD-${Date.now()}`,
+                caseId,
+                fileName: uploadedFile.name,
+                hash,
+                timestamp: new Date().toISOString(),
+                uploader: uploaderName,
+                sourceType,
+                weight: { CCTV: 92, BODYCAM: 88, MOBILE: 65, FORWARDED: 25 }[sourceType],
+                admissibilityScore: Math.min(100, (sourceType === 'CCTV' ? 92 : sourceType === 'BODYCAM' ? 88 : sourceType === 'MOBILE' ? 65 : 25) + Math.random() * 10 - 5),
+                status: sourceType === 'FORWARDED' ? 'flagged' : 'pending',
+                custodyChain: [
+                    { action: 'Captured', actor: uploaderName, timestamp: new Date().toISOString(), verified: true },
+                    { action: 'Hash Generated', actor: 'VeriCourt', timestamp: new Date().toISOString(), verified: true },
+                    { action: 'Registered', actor: uploaderName, timestamp: new Date().toISOString(), verified: true }
+                ],
+                flags: sourceType === 'FORWARDED' ? ['Origin may be unverified'] : [],
+                fileSize: uploadedFile.size / (1024 * 1024)
+            };
+
+            evidenceList.push(newEvidence);
+            updateEvidenceDropdown();
+
+            document.getElementById('resEvidenceId').textContent = newEvidence.id;
+            document.getElementById('resHash').textContent = hash;
+            document.getElementById('registerResult').classList.remove('hidden');
+
+            alert(`✅ Evidence registered!\n\nID: ${newEvidence.id}\nHash: ${hash}`);
+
+            document.getElementById('caseId').value = '';
+            document.getElementById('uploaderName').value = '';
+            uploadedFile = null;
+            document.getElementById('registerFileName').textContent = 'No file selected';
+        }
+
+        // Update Evidence Dropdown
+        function updateEvidenceDropdown() {
+            const select = document.getElementById('verifyEvidenceId');
+            select.innerHTML = '<option value="">Select evidence to verify...</option>';
+            evidenceList.forEach(ev => {
+                const option = document.createElement('option');
+                option.value = ev.id;
+                option.textContent = `${ev.id} - ${ev.fileName}`;
+                select.appendChild(option);
+            });
+        }
+
+        // Verify Evidence
+        async function verifyEvidence() {
+            const evidenceId = document.getElementById('verifyEvidenceId').value;
+            if (!verifyFile || !evidenceId) {
+                alert('Please select evidence and file');
+                return;
+            }
+
+            const selectedEv = evidenceList.find(e => e.id === evidenceId);
+            if (!selectedEv) {
+                alert('Evidence not found');
+                return;
+            }
+
+            const uploadedHash = await calculateHash(verifyFile);
+            const isMatch = uploadedHash.substring(0, 20) === selectedEv.hash.substring(0, 20);
+
+            const resultDiv = document.getElementById('verifyResult');
+            const icon = document.getElementById('verifyIcon');
+            const content = document.getElementById('verifyContent');
+            const title = document.getElementById('verifyTitle');
+            const time = document.getElementById('verifyTime');
+
+            time.textContent = `Verified at ${new Date().toLocaleString()}`;
+
+            if (isMatch) {
+                title.textContent = '✅ HASH MATCH';
+                icon.textContent = '✅';
+                content.innerHTML = '<p class="text-green-400 font-semibold">No tampering detected - Evidence integrity verified</p>';
+                selectedEv.status = 'verified';
+                alert('✅ Evidence is intact!');
+            } else {
+                title.textContent = '🚨 HASH MISMATCH';
+                icon.textContent = '🚨';
+                content.innerHTML = '<p class="text-red-400 font-semibold">Evidence has been modified or tampered</p>';
+                alert('⚠️ Evidence tampering detected!');
+            }
+            resultDiv.classList.remove('hidden');
+        }
+
+        // Load Judge Dashboard
+        function loadDashboard() {
+            const listDiv = document.getElementById('evidenceList');
+            listDiv.innerHTML = '';
+
+            evidenceList.forEach(ev => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full text-left p-3 rounded-xl transition-all hover:bg-slate-700/30';
+                btn.innerHTML = `
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="font-mono text-sm text-amber-400">${ev.id}</span>
+                        <span class="${
+                            ev.status === 'verified' ? 'text-green-500' :
+                            ev.status === 'pending' ? 'text-amber-500' :
+                            'text-red-500'
+                        }">
+                            ${ev.status === 'verified' ? '✓' : ev.status === 'pending' ? '⏱' : '⚠'}
+                        </span>
+                    </div>
+                    <p class="text-sm truncate text-slate-400">${ev.fileName}</p>
+                    <div class="flex items-center gap-2 mt-2">
+                        <div class="flex-1 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full" style="width: ${ev.admissibilityScore}%; background: ${
+                                ev.admissibilityScore >= 70 ? '#10b981' :
+                                ev.admissibilityScore >= 40 ? '#f59e0b' :
+                                '#ef4444'
+                            }"></div>
+                        </div>
+                        <span class="text-xs font-mono">${Math.round(ev.admissibilityScore)}%</span>
+                    </div>
+                `;
+                btn.onclick = () => selectEvidence(ev);
+                listDiv.appendChild(btn);
+            });
+
+            if (evidenceList.length > 0 && !selectedEvidence) {
+                selectedEvidence = evidenceList[0];
+                displayEvidenceDetail();
+            }
+        }
+
+        // Select Evidence
+        function selectEvidence(ev) {
+            selectedEvidence = ev;
+            displayEvidenceDetail();
+        }
+
+        // Display Evidence Detail
+        function displayEvidenceDetail() {
+            if (!selectedEvidence) return;
+
+            const ev = selectedEvidence;
+            const detailDiv = document.getElementById('evidenceDetail');
+            const containerDiv = document.getElementById('evidenceDetailContainer');
+
+            containerDiv.classList.add('hidden');
+            detailDiv.classList.remove('hidden');
+
+            detailDiv.innerHTML = `
+                <div class="mb-6">
+                    <div class="flex items-start justify-between mb-6">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="text-xl font-bold">${ev.id}</h3>
+                                <span class="status-badge ${
+                                    ev.status === 'verified' ? 'badge-verified' :
+                                    ev.status === 'pending' ? 'badge-pending' :
+                                    'badge-flagged'
+                                }">${ev.status.toUpperCase()}</span>
+                            </div>
+                            <p class="text-slate-400">${ev.fileName}</p>
+                        </div>
+
+                        <div class="relative" style="width: 120px; height: 120px;">
+                            <svg class="w-full h-full" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="52" stroke="rgba(71, 85, 105, 0.5)" stroke-width="8" fill="none"/>
+                                <circle cx="60" cy="60" r="52" 
+                                    stroke="${ev.admissibilityScore >= 70 ? '#10b981' : ev.admissibilityScore >= 40 ? '#f59e0b' : '#ef4444'}" 
+                                    stroke-width="8" fill="none"
+                                    stroke-dasharray="${ev.admissibilityScore * 3.27} 327"
+                                    transform="rotate(-90 60 60)"
+                                />
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                <span class="text-2xl font-bold">${Math.round(ev.admissibilityScore)}</span>
+                                <span class="text-xs text-slate-400">Score</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-400">Case ID</span>
+                                <span class="font-mono">${ev.caseId}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-400">Source Type</span>
+                                <span class="font-medium">${ev.sourceType}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-400">Evidence Weight</span>
+                                <span class="font-medium">${ev.weight}%</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-400">Uploader</span>
+                                <span>${ev.uploader}</span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-400">Hash</span>
+                                <span class="font-mono text-xs">${ev.hash}</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-slate-400">Timestamp</span>
+                                <span class="font-mono text-xs">${new Date(ev.timestamp).toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${ev.flags.length > 0 ? `
+                        <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-4 mb-6">
+                            <h4 class="font-medium text-red-500 flex items-center gap-2 mb-2">
+                                ⚠️ Integrity Flags
+                            </h4>
+                            <ul class="space-y-1">
+                                ${ev.flags.map(f => `<li class="text-sm text-red-400">• ${f}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+
+                    <div class="mb-6">
+                        <h4 class="font-bold mb-4">🔗 Chain of Custody</h4>
+                        <div class="space-y-0">
+                            ${ev.custodyChain.map((event, i) => `
+                                <div class="flex gap-3 pb-4 border-l-2 border-amber-500/30 pl-4">
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                        event.verified ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'
+                                    }">
+                                        ${event.verified ? '✓' : '⚠'}
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between">
+                                            <p class="font-medium">${event.action}</p>
+                                            <span class="text-xs text-slate-400">${new Date(event.timestamp).toLocaleTimeString()}</span>
+                                        </div>
+                                        <p class="text-sm text-slate-400">${event.actor}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button onclick="exportReport()" class="flex-1 flex items-center justify-center gap-2 bg-amber-500 text-slate-900 px-4 py-3 rounded-xl font-medium hover:opacity-90">
+                            📥 Export Court Report
+                        </button>
+                        <button class="flex items-center justify-center gap-2 glass-effect border border-slate-700/50 px-4 py-3 rounded-xl font-medium hover:border-amber-500/30">
+                            👁️ View Original
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Export Report
+        function exportReport() {
+            if (!selectedEvidence) return;
+            const ev = selectedEvidence;
+
+            const report = `VERICOURT - DIGITAL EVIDENCE REPORT
+====================================
+Generated: ${new Date().toLocaleString()}
+
+EVIDENCE ID: ${ev.id}
+Case: ${ev.caseId}
+File: ${ev.fileName}
+Status: ${ev.status.toUpperCase()}
+
+EVIDENCE PROPERTIES
+-------------------
+Source Type: ${ev.sourceType}
+Evidence Weight: ${ev.weight}%
+Admissibility Score: ${Math.round(ev.admissibilityScore)}%
+Uploader: ${ev.uploader}
+File Size: ${ev.fileSize.toFixed(2)} MB
+
+HASH VERIFICATION
+-----------------
+Hash: ${ev.hash}
+Timestamp: ${new Date(ev.timestamp).toLocaleString()}
+
+CHAIN OF CUSTODY
+----------------
+${ev.custodyChain.map(event => `• ${event.action} by ${event.actor} at ${new Date(event.timestamp).toLocaleString()}`).join('\n')}
+
+${ev.flags.length > 0 ? `\nFLAGS\n-----\n${ev.flags.map(f => `⚠️ ${f}`).join('\n')}` : ''}
+
+LEGAL NOTICE
+------------
+VeriCourt ensures the integrity and admissibility of digital evidence.
+Final judgment always remains with the court.`;
+
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${ev.id}-report.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize
+        updateTabAccess();
+        loadDashboard();
+    </script>
+
+</body>
+</html>
